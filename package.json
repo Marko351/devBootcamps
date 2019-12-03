@@ -1,0 +1,26 @@
+{
+  "name": "devbootcamps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js",
+    "start-dev": "APP_ENV=development nodemon --exec babel-node index.js",
+    "start-prod": "APP_ENV=production nodemon --exec babel-node index.js"
+  },
+  "author": "Marko Djuric",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
+    "nodemon": "^2.0.1"
+  }
+}
