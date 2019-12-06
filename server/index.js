@@ -11,9 +11,7 @@ const app = express();
 dbConfig();
 
 // Middleware Configuration
-if (process.env.APP_ENV === 'development') {
-  middlewareConfig(app);
-}
+middlewareConfig(app, express);
 
 // Routes Configuration
 routesConfig(app);
