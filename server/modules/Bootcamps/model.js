@@ -126,4 +126,4 @@ BootcampSchema.pre('save', async function(next) {
   next();
 });
 
-export default model('bootcamp', BootcampSchema);
+export default model('bootcamps', BootcampSchema);
