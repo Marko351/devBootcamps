@@ -3,9 +3,22 @@ import asyncHandler from '../../utils/asyncHandler';
 
 // @desc      Get Bootcamps
 // @route     GET /api/v1/courses
+// @route     GET /api/v1/courses/:bootcampId/courses
 export const getCourses = asyncHandler(async (req, res, next) => {
-  const courses = await Courses.find({});
-  return res.status(200).json({ success: true, data: courses });
+  let query;
+
+  if (req.params.bootcampId) {
+    query = Courses.find({ bootcamp: req.params.bootcampId }).populate({
+      path: 'bootcamp'
+    });
+  } else {
+    query = Courses.find({}).populate({ path: 'bootcamp' });
+  }
+
+  const courses = await query;
+  return res
+    .status(200)
+    .json({ success: true, count: courses.length, data: courses });
 });
 
 // @desc      Get single course

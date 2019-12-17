@@ -21,7 +21,7 @@ const CourseSchema = new Schema({
   minimumSkill: {
     type: String,
     required: [true, 'Please add a minimum skill'],
-    enum: ['beginer', 'intermediate', 'advanced']
+    enum: ['beginner', 'intermediate', 'advanced']
   },
   schoolarshipAvailable: {
     type: Boolean,
@@ -33,9 +33,9 @@ const CourseSchema = new Schema({
   },
   bootcamp: {
     type: Schema.Types.ObjectId,
-    ref: 'bootcamp',
+    ref: 'Bootcamps',
     required: true
   }
 });
 
-export default model('courses', CourseSchema);
+export default model('Courses', CourseSchema);

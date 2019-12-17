@@ -13,6 +13,7 @@ import {
 const router = new Router();
 
 router.get('/', getCourses);
+router.get('/:bootcampId/courses', getCourses);
 router.get('/:courseId', getCourse);
 router.post('/', createCourse);
 router.post('/many', createManyCourses);
