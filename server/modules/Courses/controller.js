@@ -1,24 +1,22 @@
 import Courses from './model';
+import { Bootcamps } from '../Bootcamps';
 import asyncHandler from '../../utils/asyncHandler';
+import ErrorResponse from '../../utils/errorResponse';
 
 // @desc      Get Bootcamps
 // @route     GET /api/v1/courses
 // @route     GET /api/v1/courses/:bootcampId/courses
 export const getCourses = asyncHandler(async (req, res, next) => {
-  let query;
-
   if (req.params.bootcampId) {
-    query = Courses.find({ bootcamp: req.params.bootcampId }).populate({
-      path: 'bootcamp'
+    const courses = await Courses.find({ bootcamp: req.params.bootcampId });
+    return res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses
     });
   } else {
-    query = Courses.find({}).populate({ path: 'bootcamp' });
+    return res.status(200).json(res.advancedResults);
   }
-
-  const courses = await query;
-  return res
-    .status(200)
-    .json({ success: true, count: courses.length, data: courses });
 });
 
 // @desc      Get single course
@@ -26,18 +24,29 @@ export const getCourses = asyncHandler(async (req, res, next) => {
 
 export const getCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.courseId;
-  const course = await Courses.findById(courseId);
+  const course = await Courses.findById(courseId).populate({
+    path: 'bootcamp',
+    select: 'name description'
+  });
   if (!course) {
-    return next(`Course not found with id of ${courseId}`);
+    return next(new ErrorResponse('cao cao seceru', 422));
   }
   return res.status(200).json({ success: true, data: course });
 });
 
 // @desc      Create course
-// @route     POST /api/v1/courses
+// @route     POST /api/v1/courses/:bootcampId/courses
 
 export const createCourse = asyncHandler(async (req, res, next) => {
+  const bootcampId = req.params.bootcampId;
+
+  const bootcamp = await Bootcamps.findById(bootcampId);
+
+  if (!bootcamp) {
+    return next(ErrorResponse(`Bootcamp with id ${bootcampId} not found`, 404));
+  }
   const data = { ...req.body };
+  data.bootcamp = bootcampId;
   const course = await Courses.create(data);
   return res.status(201).json({ success: true, data: course });
 });
@@ -54,7 +63,9 @@ export const updateCourse = asyncHandler(async (req, res, next) => {
   });
 
   if (!course) {
-    return next(`Course not found with id of ${courseId}`);
+    return next(
+      new ErrorResponse(`Course not found with id of ${courseId}`, 404)
+    );
   }
   return res.status(200).json({ success: true, data: course });
 });
@@ -64,11 +75,15 @@ export const updateCourse = asyncHandler(async (req, res, next) => {
 
 export const deleteCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.courseId;
-  const deletedCourse = await Courses.findByIdAndDelete(courseId);
+  const deletedCourse = await Courses.findById(courseId);
 
   if (!deletedCourse) {
-    return next(`Course not found with id of ${courseId}`);
+    return next(
+      new ErrorResponse(`Course not found with id of ${courseId}`, 404)
+    );
   }
+
+  await deletedCourse.remove();
   return res.status(200).json({ success: true, data: deletedCourse });
 });
 

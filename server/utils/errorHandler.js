@@ -1,9 +1,10 @@
 export default (err, req, res, next) => {
   let error;
+  console.log('Error', err);
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
-    const message = `Bootcamp not found with id of ${err.value}`;
+    const message = `Resource not found`;
     error = { message, status: 404 };
   } else if (err.code === 11000) {
     // Mongoose duplicate key
@@ -17,6 +18,10 @@ export default (err, req, res, next) => {
     error = { message, status: 400 };
   } else if (typeof err === 'string') {
     error = { message: err, status: 404 };
+  }
+
+  if (err.externalError) {
+    error = { message: err.message, status: err.statusCode };
   }
 
   return res
