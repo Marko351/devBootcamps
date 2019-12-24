@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Courses from './model';
 import advancedResults from '../../utils/advancedResults';
+import { protectRoutes, authorize } from '../../middleware/auth';
 
 import {
   getCourse,
@@ -23,10 +24,30 @@ router.get(
 );
 router.get('/:bootcampId/courses', getCourses);
 router.get('/:courseId', getCourse);
-router.post('/:bootcampId/courses', createCourse);
+router.post(
+  '/:bootcampId/courses',
+  protectRoutes,
+  authorize('publisher', 'admin'),
+  createCourse
+);
 router.post('/many', createManyCourses);
-router.patch('/:courseId', updateCourse);
-router.delete('/all', deleteAllCourses);
-router.delete('/:courseId', deleteCourse);
+router.patch(
+  '/:courseId',
+  protectRoutes,
+  authorize('publisher', 'admin'),
+  updateCourse
+);
+router.delete(
+  '/all',
+  protectRoutes,
+  authorize('publisher', 'admin'),
+  deleteAllCourses
+);
+router.delete(
+  '/:courseId',
+  protectRoutes,
+  authorize('publisher', 'admin'),
+  deleteCourse
+);
 
 export default router;

@@ -100,6 +100,11 @@ const BootcampSchema = new Schema({
   createdAt: {
     type: Date,
     default: new Date().toISOString()
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 });
 

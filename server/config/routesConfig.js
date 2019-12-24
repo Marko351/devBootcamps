@@ -4,7 +4,7 @@ import {
   CoursesRoutes,
   AuthRoutes
 } from '../modules';
-import ErrorHandler from '../utils/errorHandler';
+import ErrorHandler from '../middleware/errorHandler';
 
 export default app => {
   app.use('/api/v1/bootcamps', BootcampRoutes, ErrorHandler);

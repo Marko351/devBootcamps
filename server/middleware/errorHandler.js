@@ -4,7 +4,7 @@ export default (err, req, res, next) => {
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
-    const message = `Resource not found`;
+    const message = `Resource not found with id of ${err.value}`;
     error = { message, status: 404 };
   } else if (err.code === 11000) {
     // Mongoose duplicate key
