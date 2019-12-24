@@ -16,12 +16,12 @@ middlewareConfig(app, express);
 // Routes Configuration
 routesConfig(app);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || PORT;
 
 const server = app.listen(
   PORT,
   console.log(
-    `Server running in ${process.env.APP_ENV} mode on port ${PORT}`.yellow.bold
+    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
   )
 );
 
