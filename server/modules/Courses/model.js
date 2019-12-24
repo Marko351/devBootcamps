@@ -21,7 +21,7 @@ const CourseSchema = new Schema({
   minimumSkill: {
     type: String,
     required: [true, 'Please add a minimum skill'],
-    enum: ['beginer', 'intermediate', 'advanced']
+    enum: ['beginner', 'intermediate', 'advanced']
   },
   schoolarshipAvailable: {
     type: Boolean,
@@ -33,9 +33,43 @@ const CourseSchema = new Schema({
   },
   bootcamp: {
     type: Schema.Types.ObjectId,
-    ref: 'bootcamp',
+    ref: 'Bootcamps',
     required: true
   }
 });
 
-export default model('courses', CourseSchema);
+// Static method to get avg of course tuitions
+CourseSchema.statics.getAvarageCost = async function(bootcampId) {
+  console.log('Calculating avarage cost');
+
+  const obj = await this.aggregate([
+    {
+      $match: { bootcamp: bootcampId }
+    },
+    {
+      $group: {
+        _id: '$bootcamp',
+        averageCost: { $avg: '$tuition' }
+      }
+    }
+  ]);
+  try {
+    await this.model('Bootcamps').findByIdAndUpdate(bootcampId, {
+      averageCost: Math.ceil(obj[0].averageCost / 10) * 10
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// Call getAvarageCost after save
+CourseSchema.post('save', function() {
+  this.constructor.getAvarageCost(this.bootcamp);
+});
+
+// Call getAvarageCost before remove
+CourseSchema.pre('remove', function() {
+  this.constructor.getAvarageCost(this.bootcamp);
+});
+
+export default model('Courses', CourseSchema);

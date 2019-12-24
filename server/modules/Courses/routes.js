@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import Courses from './model';
+import advancedResults from '../../utils/advancedResults';
 
 import {
   getCourse,
@@ -12,9 +14,16 @@ import {
 
 const router = new Router();
 
-router.get('/', getCourses);
+router.get(
+  '/',
+  advancedResults(Courses, {
+    path: 'bootcamp'
+  }),
+  getCourses
+);
+router.get('/:bootcampId/courses', getCourses);
 router.get('/:courseId', getCourse);
-router.post('/', createCourse);
+router.post('/:bootcampId/courses', createCourse);
 router.post('/many', createManyCourses);
 router.patch('/:courseId', updateCourse);
 router.delete('/all', deleteAllCourses);

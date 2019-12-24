@@ -126,4 +126,20 @@ BootcampSchema.pre('save', async function(next) {
   next();
 });
 
-export default model('bootcamps', BootcampSchema);
+//Cascade delete courses when bootcamps is deleted
+BootcampSchema.pre('remove', async function(next) {
+  await this.model('Courses').deleteMany({ bootcamp: this._id });
+  next();
+});
+
+BootcampSchema.virtual('courses', {
+  ref: 'Courses',
+  localField: '_id',
+  foreignField: 'bootcamp',
+  justOne: false
+});
+
+BootcampSchema.set('toObject', { virtuals: true });
+BootcampSchema.set('toJSON', { virtuals: true });
+
+export default model('Bootcamps', BootcampSchema);

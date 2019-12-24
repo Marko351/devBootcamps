@@ -1,4 +1,4 @@
 import BootcampRoutes from './routes';
-import Bootcamp from './model';
+import Bootcamps from './model';
 
-export { BootcampRoutes, Bootcamp };
+export { BootcampRoutes, Bootcamps };
