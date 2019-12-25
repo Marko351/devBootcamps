@@ -47,6 +47,19 @@ export const createCourse = asyncHandler(async (req, res, next) => {
   }
   const data = { ...req.body };
   data.bootcamp = bootcampId;
+  data.user = req.user.id;
+
+  // Make shure user is bootcamp owbner
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.name} is not authorized to add a course to bootcamp ${bootcamp.name}`,
+        401,
+        true
+      )
+    );
+  }
+
   const course = await Courses.create(data);
   return res.status(201).json({ success: true, data: course });
 });
@@ -57,16 +70,30 @@ export const createCourse = asyncHandler(async (req, res, next) => {
 export const updateCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.courseId;
   const data = { ...req.body };
-  const course = await Courses.findByIdAndUpdate(courseId, data, {
-    new: true,
-    runValidators: true
-  });
+  let course = await Courses.findById(courseId);
 
   if (!course) {
     return next(
       new ErrorResponse(`Course not found with id of ${courseId}`, 404)
     );
   }
+
+  // Make shure user is bootcamp owbner
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.name} is not authorized to update course ${course.title}`,
+        401,
+        true
+      )
+    );
+  }
+
+  course = await Courses.findByIdAndUpdate(courseId, data, {
+    new: true,
+    runValidators: true
+  });
+
   return res.status(200).json({ success: true, data: course });
 });
 
@@ -80,6 +107,20 @@ export const deleteCourse = asyncHandler(async (req, res, next) => {
   if (!deletedCourse) {
     return next(
       new ErrorResponse(`Course not found with id of ${courseId}`, 404)
+    );
+  }
+
+  // Make shure user is bootcamp owbner
+  if (
+    deletedCourse.user.toString() !== req.user.id &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.name} is not authorized to delete course ${deletedCourse.title}`,
+        401,
+        true
+      )
     );
   }
 
