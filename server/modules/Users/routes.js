@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { protectRoutes, authorize } from '../../middleware/auth';
-import { updateUserDetails } from './controller';
+import { updateUserDetails, updateUserPassword } from './controller';
+import { protectRoutes } from '../../middleware/auth';
 
-console.log(protectRoutes, authorize);
 const router = new Router();
 
-router.put('/update-user-details', updateUserDetails);
+router.patch('/update-user-details', protectRoutes, updateUserDetails);
+router.patch('/update-user-password', protectRoutes, updateUserPassword);
 
 export default router;

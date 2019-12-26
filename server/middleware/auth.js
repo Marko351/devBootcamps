@@ -1,7 +1,23 @@
 import jwt from 'jsonwebtoken';
 import asyncHandler from '../utils/asyncHandler';
 import ErrorResponse from '../utils/errorResponse';
-import { Users } from '../modules/Users';
+import Users from '../modules/Users/model';
+
+// Grant access to specific roles
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorResponse(
+          `User role ${req.user.role} is not authorized to access this route`,
+          403,
+          true
+        )
+      );
+    }
+    next();
+  };
+};
 
 export const protectRoutes = asyncHandler(async (req, res, next) => {
   let token;
@@ -35,19 +51,3 @@ export const protectRoutes = asyncHandler(async (req, res, next) => {
     );
   }
 });
-
-// Grant access to specific roles
-export const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new ErrorResponse(
-          `User role ${req.user.role} is not authorized to access this route`,
-          403,
-          true
-        )
-      );
-    }
-    next();
-  };
-};
