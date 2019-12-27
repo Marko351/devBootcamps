@@ -3,6 +3,50 @@ import asyncHandler from '../../utils/asyncHandler';
 import ErrorResponse from '../../utils/errorResponse';
 import sendTokenResponse from '../../utils/sendTokenResponse';
 
+// @desc      Get all User
+// @route     GET /api/v1/users
+export const getUsers = asyncHandler(async (req, res, next) => {
+  res.status(200).json(res.advancedResults);
+});
+
+// @desc      Get single User
+// @route     GET /api/v1/users/:userId
+export const getSingleUser = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+  const user = await Users.findById(userId);
+
+  res.status(200).josn({ success: true, data: user });
+});
+
+// @desc      Create User
+// @route     POST /api/v1/users
+export const createUser = asyncHandler(async (req, res, next) => {
+  const user = await Users.create(req.body);
+
+  res.status(200).josn({ success: true, data: user });
+});
+
+// @desc      Update User
+// @route     PATCH /api/v1/users/:userId
+export const updateUser = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+  const user = await Users.findByIdAndUpdate(userId, req.body, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).josn({ success: true, data: user });
+});
+
+// @desc      Delete User
+// @route     DELETE /api/v1/users/:userId
+export const deleteUser = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+  await Users.findByIdAndDelete(userId);
+
+  res.status(200).josn({ success: true, data: {} });
+});
+
 // @desc      Update User Details
 // @route     PATCH /api/v1/users/update-user-details
 export const updateUserDetails = asyncHandler(async (req, res, next) => {

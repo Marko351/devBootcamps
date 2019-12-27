@@ -27,7 +27,7 @@ const CourseSchema = new Schema({
     type: Boolean,
     default: false
   },
-  createfAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
