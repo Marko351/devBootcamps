@@ -23,7 +23,7 @@ export const getReviews = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/reviews/:reviewId
 export const getReview = asyncHandler(async (req, res, next) => {
   const reviewId = req.params.reviewId;
-  const review = await Reviews.findById(reviewId).populated({
+  const review = await Reviews.findById(reviewId).populate({
     path: 'bootcamp',
     select: 'name, description'
   });
@@ -58,4 +58,55 @@ export const createReview = asyncHandler(async (req, res, next) => {
   const review = await Reviews.create(req.body);
 
   return res.status(201).json({ success: true, data: review });
+});
+
+// @desc      Update Review
+// @route     PATCH /api/v1/reviews/:reviewId
+export const updateReview = asyncHandler(async (req, res, next) => {
+  const reviewId = req.params.reviewId;
+  const review = await Reviews.findById(reviewId);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(`No review with id of ${reviewId}`, 404, true)
+    );
+  }
+
+  // Make shure review belogns to user
+  if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not authorized to update review`, 401, true)
+    );
+  }
+
+  const updatedReview = await Reviews.findByIdAndUpdate(reviewId, req.body, {
+    new: true,
+    runValidators: true
+  });
+
+  return res.status(201).json({ success: true, data: updatedReview });
+});
+
+// @desc      Delete Review
+// @route     PATCH /api/v1/reviews/:reviewId
+export const deleteReview = asyncHandler(async (req, res, next) => {
+  const reviewId = req.params.reviewId;
+  const review = await Reviews.findById(reviewId);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(`No review with id of ${reviewId}`, 404, true)
+    );
+  }
+
+  // Make shure review belogns to user
+  if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not authorized to delete review`, 401, true)
+    );
+  }
+
+  const deletedReview = await review.remove();
+
+  return res.status(201).json({ success: true, data: deletedReview });
 });

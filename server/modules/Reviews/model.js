@@ -33,6 +33,38 @@ const ReviewSchema = new Schema({
   }
 });
 
+// Static method to get avg of rating
+ReviewSchema.statics.getAvarageRating = async function(bootcampId) {
+  const obj = await this.aggregate([
+    {
+      $match: { bootcamp: bootcampId }
+    },
+    {
+      $group: {
+        _id: '$bootcamp',
+        averageRating: { $avg: '$rating' }
+      }
+    }
+  ]);
+  try {
+    await this.model('Bootcamps').findByIdAndUpdate(bootcampId, {
+      averageRating: obj[0].averageRating
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// Call getAvarageRating after save
+ReviewSchema.post('save', function() {
+  this.constructor.getAvarageRating(this.bootcamp);
+});
+
+// Call getAvarageRating before remove
+ReviewSchema.pre('remove', function() {
+  this.constructor.getAvarageRating(this.bootcamp);
+});
+
 // Prevent user from submiting more than one review per bootcamp
 ReviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
 

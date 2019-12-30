@@ -3,7 +3,13 @@ import advancedResults from '../../utils/advancedResults';
 import { protectRoutes, authorize } from '../../middleware/auth';
 import Reviews from './model';
 
-import { getReviews, getReview, createReview } from './controller';
+import {
+  getReviews,
+  getReview,
+  createReview,
+  updateReview,
+  deleteReview
+} from './controller';
 
 const router = new Router();
 
@@ -19,6 +25,18 @@ router.post(
   protectRoutes,
   authorize('user', 'admin'),
   createReview
+);
+router.patch(
+  '/:reviewId',
+  protectRoutes,
+  authorize('user', 'admin'),
+  updateReview
+);
+router.delete(
+  '/:reviewId',
+  protectRoutes,
+  authorize('user', 'admin'),
+  deleteReview
 );
 
 export default router;
