@@ -3,9 +3,13 @@ import express from 'express';
 import routesConfig from './config/routesConfig';
 import middlewareConfig from './config/middlewareConfig';
 import dbConfig from './config/dbConfig';
+import helmet from 'helmet';
 import colors from 'colors';
 
 const app = express();
+
+// Add Security Headers
+app.use(helmet())
 
 // MongoDB Configuration
 dbConfig();
